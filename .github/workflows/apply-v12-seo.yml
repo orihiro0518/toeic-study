@@ -1,0 +1,58 @@
+name: Apply TOEIC v1.2 SEO
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/apply-v12-seo.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch main page and generate SEO pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text()
+          s=s.replace('<title>TOEIC対策｜単語・熟語・文法問題と文法解説｜ORIVECTOR</title>','<title>TOEIC対策 無料問題集｜Part 5・単語・熟語・文法を4択演習｜ORIVECTOR</title>')
+          s=s.replace('TOEIC L&R対策を無料で学べるORIVECTORの学習サイト。TOEIC頻出単語・熟語・文法問題、文法解説、間違い復習、学習進捗保存に対応。','TOEIC L&R対策の無料問題集。Part 5形式の文法、頻出単語・熟語を4択で反復。時制・前置詞・分詞・関係詞などカテゴリ別に10問・20問・全問から演習できます。')
+          if '<script src="toeic-v3.js"></script>' not in s:
+              s=s.replace('</body>','<script src="toeic-v3.js"></script>\n</body>')
+          links='''<section class="section card" id="seo-guides"><h2>📚 TOEIC攻略ガイド</h2><p>Part 5や頻出文法をテーマ別に整理しました。</p><div class="btnrow"><a class="btn" href="part5/">Part 5攻略</a><a class="btn" href="vocabulary/">頻出単語</a><a class="btn" href="grammar/">文法まとめ</a><a class="btn" href="prepositions/">前置詞</a><a class="btn" href="participles/">分詞</a><a class="btn" href="relative-clauses/">関係詞</a></div></section>'''
+          if 'id="seo-guides"' not in s:s=s.replace('</main>',links+'\n</main>')
+          p.write_text(s)
+          style='''body{margin:0;background:#07101d;color:#eff6ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",sans-serif;line-height:1.8}main{max-width:820px;margin:auto;padding:28px 18px 80px}a{color:#8cc8ff}.back{display:inline-block;margin-bottom:18px}h1{line-height:1.3}h2{margin-top:34px;color:#bfe5ff}.box{background:#101d31;border:1px solid #29425f;border-radius:16px;padding:18px;margin:18px 0}.tip{background:#33270c;border:1px solid #6e561a;border-radius:12px;padding:12px}.cta{display:inline-block;background:#22c55e;color:#04150a;text-decoration:none;font-weight:800;padding:12px 18px;border-radius:12px;margin-top:18px}'''
+          Path('seo-style.css').write_text(style)
+          pages={
+          'part5':('TOEIC Part 5対策｜解き方・頻出文法・無料問題','TOEIC Part 5は短文の空所に入る最適な選択肢を4択から選ぶ形式です。公式のIIBC案内ではPart 5はIncomplete Sentences 30問。ORIVECTORでは本番形式を意識したオリジナル穴埋め問題で練習できます。',[('Part 5で見るポイント','まず空所の前後から品詞を判定し、次に時制・態・語法・接続関係を確認します。全文を訳す前に構造を見ると速く解けます。'),('頻出カテゴリ','品詞、動詞の時制、受動態、前置詞、接続詞、分詞、関係詞、比較、主語と動詞の一致を優先して反復します。')]),
+          'vocabulary':('TOEIC頻出単語の覚え方｜4択無料問題','TOEICでは職場や日常の場面で使われる語彙・フレーズが多く扱われます。英単語を見て日本語の意味を即答し、解答後に例文で使い方まで確認する学習法を採用しています。',[('意味だけで終わらせない','単語は意味を一つ覚えたあと、report、meeting、shipment、applicationなどTOEICで出やすい名詞との組み合わせを例文で確認します。'),('周回する','10問で短く回し、間違えた語を復習。慣れたら20問、最後に全問で定着を確認します。')]),
+          'grammar':('TOEIC文法まとめ｜Part 5頻出項目を基礎から','TOEIC Part 5で頻出の文法を、時制・前置詞・品詞・接続詞・分詞・関係詞・受動態・比較などに分けて学べます。',[('文法問題の基本手順','空所に必要な品詞を確認し、動詞なら主語・時制・能動/受動、接続語なら後ろが節か名詞かを見ます。'),('カテゴリ別演習','苦手分野だけを選び、10問・20問・全問から問題数を選んで反復できます。')]),
+          'prepositions':('TOEIC前置詞対策｜at・on・in・for・byの使い分け','Part 5では前置詞そのものだけでなく、決まった語との組み合わせが重要です。時刻のat、日のon、期間や範囲のin/within、期限のbyなどを文脈で判断します。',[('後ろの形を見る','becauseの後ろは主語＋動詞、because ofの後ろは名詞。althoughとdespiteなども同じ発想で整理できます。'),('かたまりで覚える','in advance、on a regular basis、free of charge、be responsible forなどは一語ずつではなくフレーズで覚えます。')]),
+          'participles':('TOEIC分詞問題｜現在分詞と過去分詞の見分け方','現在分詞 -ing と過去分詞 -ed は、修飾される名詞との関係を見るのが基本です。現在分詞は能動的、過去分詞は受動的な意味を持つことが多いです。',[('名詞との関係','the documents placed on the desk のdocumentsは「置かれた」側なのでplaced。人の感情ではinterested、satisfied、pleasedなど過去分詞形が頻出です。'),('Part 5での見方','空所の後ろに目的語があるか、名詞が動作をする側か受ける側かを確認すると判断しやすくなります。')]),
+          'relative-clauses':('TOEIC関係詞問題｜who・which・whose・whereの使い分け','関係詞は先行詞と、関係詞の後ろの文が完成しているかを確認します。人ならwho、物ならwhich、所有ならwhoseが基本です。',[('欠けている要素を見る','後ろの節に主語や目的語が欠けていれば関係代名詞が候補。whereやwhenの後ろは基本的に完全文になります。'),('whoseの形','whose + 名詞の形で所有関係を表します。先行詞が人だけでなく物の場合にも使われます。')])}
+          for slug,(title,intro,sections) in pages.items():
+              body=''.join(f'<h2>{h}</h2><div class="box">{t}</div>' for h,t in sections)
+              desc=intro[:115]
+              html=f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}｜ORIVECTOR</title><meta name="description" content="{desc}"><link rel="canonical" href="https://orivector.jp/toeic-study/{slug}/"><meta name="robots" content="index,follow"><link rel="stylesheet" href="../seo-style.css"></head><body><main><a class="back" href="../">← TOEIC対策トップ</a><h1>{title}</h1><p>{intro}</p>{body}<div class="tip">掲載問題・解説はORIVECTORオリジナルです。公式問題や市販教材の転載ではありません。</div><a class="cta" href="../">無料問題を解く →</a></main></body></html>'''
+              d=Path(slug);d.mkdir(exist_ok=True);(d/'index.html').write_text(html)
+          urls=['','part5/','vocabulary/','grammar/','prepositions/','participles/','relative-clauses/']
+          sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'<url><loc>https://orivector.jp/toeic-study/{u}</loc></url>\n' for u in urls)+'</urlset>\n'
+          Path('sitemap.xml').write_text(sm);Path('robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://orivector.jp/toeic-study/sitemap.xml\n')
+          PY
+      - name: Validate
+        run: |
+          grep -q 'toeic-v3.js' index.html
+          grep -q 'TOEIC対策 無料問題集' index.html
+          test -s sitemap.xml
+          test -s robots.txt
+          for d in part5 vocabulary grammar prepositions participles relative-clauses; do test -s "$d/index.html"; done
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html toeic-v3.js seo-style.css sitemap.xml robots.txt part5 vocabulary grammar prepositions participles relative-clauses
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Add TOEIC question count selector and SEO guides'
+          git push
