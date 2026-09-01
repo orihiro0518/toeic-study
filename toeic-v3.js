@@ -1,0 +1,8 @@
+(()=>{
+function shuffled(items){return [...items].sort(()=>Math.random()-.5)}
+function launch(items,count){let xs=shuffled(items);if(count!=='all')xs=xs.slice(0,Math.min(Number(count),xs.length));pool=xs;pos=0;allHide();document.getElementById('quiz').classList.remove('hidden');renderQuestion();scrollTo(0,0)}
+function chooseCount(items,title){const old=document.getElementById('countPicker');if(old)old.remove();const p=document.createElement('div');p.id='countPicker';p.className='card';p.style.marginTop='14px';p.innerHTML='<h3>📚 '+title+'：問題数を選択</h3><p style="margin-bottom:12px">AWS・ネスペと同じように、演習する問題数を選べます。</p><div class="btnrow"><button class="btn primary" data-n="10">10問</button><button class="btn" data-n="20">20問</button><button class="btn" data-n="all">全問</button></div>';const anchor=document.getElementById('grammarPicker')||document.querySelector('.grid');anchor.after(p);p.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{p.remove();launch(items,b.dataset.n)});p.scrollIntoView({behavior:'smooth',block:'center'})}
+window.startQuiz=function(cat){const items=questions.map((q,i)=>({...q,i})).filter(x=>x.c===cat);chooseCount(items,labels[cat]+'問題')};
+window.startGrammar=function(gc){const items=questions.map((q,i)=>({...q,i})).filter(x=>x.c==='grammar'&&(gc==='all'||x.gc===gc));chooseCount(items,gc==='all'?'文法・全カテゴリ':'文法・'+gc)};
+const ver=document.querySelector('.ver');if(ver)ver.textContent='ver 1.2.0';
+})();
