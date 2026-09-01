@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://orivector.jp/toeic-study/sitemap.xml
