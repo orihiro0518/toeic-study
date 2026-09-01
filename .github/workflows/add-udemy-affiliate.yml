@@ -1,0 +1,40 @@
+name: Add Udemy affiliate recommendation
+on:
+  push:
+    paths:
+      - '.github/workflows/add-udemy-affiliate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add recommendation safely
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          marker='<p class="notice">※ 本サイトの問題・例文はORIVECTORが作成したオリジナル学習コンテンツです。'
+          if 'id="udemy-recommend"' in s:
+              raise SystemExit(0)
+          if marker not in s:
+              raise SystemExit('notice marker not found')
+          block='''<div class="card" id="udemy-recommend" style="margin-top:18px;border-color:rgba(168,85,247,.45)">\n  <span class="badge">おすすめ学習教材</span>\n  <h2 style="margin-bottom:8px">動画講座でもTOEIC対策</h2>\n  <p>単語・熟語・Part 5の問題演習に加えて、英文法やTOEIC対策を動画で体系的に学びたい場合はUdemyの講座も活用できます。</p>\n  <div class="btnrow"><a class="btn primary" href="https://trk.udemy.com/c/7699504/3193860/39854" target="_blank" rel="sponsored noopener noreferrer" style="text-decoration:none">Udemyで関連講座を見る →</a></div>\n  <p class="notice" style="margin-bottom:0">※ このリンクはアフィリエイトリンクです。リンク経由の申込みによりORIVECTORが報酬を受け取る場合があります。</p>\n</div>\n'''
+          s=s.replace(marker,block+marker,1)
+          p.write_text(s)
+          PY
+      - name: Validate
+        run: |
+          grep -q 'id="udemy-recommend"' index.html
+          grep -q 'https://trk.udemy.com/c/7699504/3193860/39854' index.html
+      - name: Commit
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add Udemy affiliate recommendation'
+          git push
