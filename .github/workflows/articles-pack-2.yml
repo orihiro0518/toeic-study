@@ -1,0 +1,38 @@
+name: Generate TOEIC SEO article pack 2
+on:
+  push:
+    paths:
+      - '.github/workflows/articles-pack-2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract generator from source file
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          lines=Path('articles-pack-2.yml').read_text(encoding='utf-8').splitlines()
+          start=next(i for i,l in enumerate(lines) if l.strip()=='- name: Generate articles')
+          run_i=next(i for i in range(start+1,len(lines)) if lines[i].strip()=='run: |')
+          end=next(i for i in range(run_i+1,len(lines)) if lines[i].strip()=='- name: Commit')
+          block=lines[run_i+1:end]
+          # Source workflow block is indented 10 spaces.
+          code='\n'.join((l[10:] if l.startswith('          ') else l) for l in block)+'\n'
+          Path('/tmp/generate_articles.py').write_text(code,encoding='utf-8')
+          PY
+          python /tmp/generate_articles.py
+      - name: Commit generated articles
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sitemap.xml */index.html
+          if git diff --cached --quiet; then
+            echo 'No changes needed.'
+          else
+            git commit -m 'Add 15 TOEIC SEO learning articles'
+            git push
+          fi
