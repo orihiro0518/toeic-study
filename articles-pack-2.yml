@@ -1,0 +1,52 @@
+name: Add TOEIC SEO article pack 2
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'articles-pack-2.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate articles
+        shell: python
+        run: |
+          from pathlib import Path
+          articles = [
+            ('adverbs','TOEIC副詞問題の解き方','副詞は動詞・形容詞・別の副詞・文全体を修飾します。Part 5では空欄の前後から、名詞ではなく動作や状態を説明する語が必要か判断します。','The new system operates _____.','efficiently','operatesという動詞を修飾するため副詞 efficiently が適切です。','動詞を説明する空欄なら副詞を第一候補にします。'),
+            ('gerund-vs-infinitive','TOEIC動名詞・不定詞の使い分け','動詞の後ろが -ing か to do かはPart 5の定番です。意味だけでなく、前の動詞が取る形をセットで覚えると速く解けます。','The manager agreed _____ the proposal.','to review','agree は後ろに to不定詞を取る代表的な動詞です。','agree to do、avoid doing のように動詞と形をセットで覚えます。'),
+            ('articles-a-an-the','TOEIC冠詞a・an・theの使い分け','冠詞問題では名詞が単数可算か、相手と共有された特定のものかを確認します。a/anは不特定の1つ、theは特定できるものが基本です。','Please send me _____ updated schedule.','the','話し手と聞き手が特定できる更新済みスケジュールを指す文脈では the が自然です。','冠詞だけでなく直後の名詞が可算・不可算かも確認します。'),
+            ('pronouns','TOEIC代名詞問題の解き方','代名詞は主格・目的格・所有格・所有代名詞・再帰代名詞を見分けます。空欄が文中で何の役割をするかを先に確認します。','The director asked _____ to attend the meeting.','us','askの目的語が必要なので目的格 us が適切です。','空欄の位置から主語・目的語・所有を先に決めます。'),
+            ('relative-pronouns','TOEIC関係代名詞who・which・thatの使い分け','先行詞が人か物かに加え、関係詞節の中で主語・目的語のどちらが欠けているかを確認します。','Employees _____ complete the course will receive a certificate.','who','先行詞Employeesは人で、後ろの節の主語が欠けているため who が適切です。','先行詞だけでなく後ろの文の欠け方まで見ます。'),
+            ('conjunction-vs-preposition','TOEIC接続詞と前置詞の見分け方','Part 5では because / because of、although / despite などが頻出です。空欄の後ろが文なら接続詞、名詞句なら前置詞を選ぶのが基本です。','The event was postponed _____ heavy rain.','because of','後ろのheavy rainは名詞句なので前置詞句 because of が適切です。','空欄の後ろに主語＋動詞があるかを最初に確認します。'),
+            ('during-for-while','TOEIC during・for・whileの違い','duringは名詞、whileは節、forは期間の長さを後ろに取るのが基本です。形を見れば意味を細かく訳さず解けることがあります。','The store will remain closed _____ the renovation.','during','the renovationは名詞句なので during が適切です。','during＋名詞、while＋主語＋動詞、for＋期間で整理します。'),
+            ('since-for','TOEIC since・forの使い分け','現在完了と一緒に出やすいsinceとforは、起点か期間かで判断します。sinceは開始時点、forは継続した長さを示します。','She has worked here _____ five years.','for','five yearsは期間の長さなので for を使います。','since 2022のような起点、for three monthsのような期間で区別します。'),
+            ('by-until','TOEIC by・untilの違い','byは期限までに完了、untilはその時点まで状態や動作が継続するイメージです。動詞の意味とセットで判断します。','Please submit the form _____ Friday.','by','submitは提出を完了させる動作なので期限を表す by が適切です。','完了の締切ならby、継続の終点ならuntilを考えます。'),
+            ('each-every-all','TOEIC each・every・allの使い分け','eachとeveryの後ろは原則として単数名詞、allは複数名詞や不可算名詞と組み合わせられます。動詞の単複にも注意します。','_____ employee must wear an ID badge.','Every','employeeが単数で、全員を一人ひとり含む意味なので Every が自然です。','後ろの名詞が単数か複数かをまず確認します。'),
+            ('few-little','TOEIC few・little・many・muchの使い分け','数えられる名詞にはfew/many、数えられない名詞にはlittle/muchを使います。a fewとfewではニュアンスも変わります。','We have _____ time before the meeting.','little','timeは不可算名詞なので little が適切です。','可算・不可算を判定してから数量表現を選びます。'),
+            ('another-other','TOEIC another・other・othersの使い分け','anotherは「もう1つ」の単数、otherは後ろに名詞を置き、othersは代名詞として単独で使えます。','Could you show me _____ option?','another','optionは単数可算名詞で「別のもう1つ」を表すため another が適切です。','another＋単数、other＋名詞、others単独を基本形にします。'),
+            ('part5-speed','TOEIC Part5を速く解くコツ','Part 5は全文和訳より、空欄前後から問題タイプを判定する方が効率的です。品詞、動詞、前置詞・接続詞の順に見るポイントを固定します。','The report was _____ prepared by the team.','carefully','preparedを修飾する副詞が必要なので carefully が適切です。','まず品詞問題かどうかを数秒で判定し、必要な範囲だけ読みます。'),
+            ('part5-word-form','TOEIC Part5語形変化問題の攻略','同じ語源の名詞・動詞・形容詞・副詞が選択肢に並ぶ問題では、意味より空欄の文法上の位置を優先します。','Customer _____ is our top priority.','satisfaction','主語になる名詞が必要なので satisfaction が適切です。','選択肢の語尾 -tion、-ive、-ly などから品詞を素早く判定します。'),
+            ('part5-study-plan','TOEIC Part5の勉強法｜400点台から伸ばす順番','基礎段階では難問を大量に解くより、品詞・時制・前置詞・接続詞など頻出型を理解し、間違えた理由を説明できる状態にすることが重要です。','The company _____ a new policy last month.','introduced','last monthという過去の時点があるため過去形 introduced が適切です。','問題を解く→根拠確認→同じ型を解き直す、の順で復習します。'),
+          ]
+          author='''<aside class="orivector-author" style="width:min(900px,calc(100% - 32px));margin:28px auto;padding:16px 18px;border:1px solid #203552;border-radius:14px;background:#081527;color:#c5d3e5;font-size:13px;line-height:1.7"><strong style="color:#fff">執筆・運営：<a href="https://orivector.jp/about/" rel="author" style="color:#8fc7ff">shun</a></strong><br>SIerで法人向け金融システムのインフラを7年担当。公式情報・市販参考書・AIを活用し、内容を確認しながら学習コンテンツを改善しています。</aside>'''
+          for slug,title,intro,q,a,exp,tip in articles:
+            p=Path(slug)/'index.html'; p.parent.mkdir(parents=True,exist_ok=True)
+            desc=intro[:120]
+            html=f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}｜ORIVECTOR</title><meta name="description" content="{desc}"><link rel="canonical" href="https://orivector.jp/toeic-study/{slug}/"><meta name="robots" content="index,follow,max-image-preview:large"><meta property="og:type" content="article"><meta property="og:site_name" content="ORIVECTOR"><meta property="og:title" content="{title}｜ORIVECTOR"><meta property="og:url" content="https://orivector.jp/toeic-study/{slug}/"><link rel="stylesheet" href="../seo-style.css"><meta name="author" content="shun"><link rel="author" href="https://orivector.jp/about/"></head><body><main><a class="back" href="../articles/">← TOEIC対策ガイド</a><h1>{title}</h1><p>{intro}</p><h2>解き方の基本</h2><div class="box">{tip}</div><h2>例題</h2><div class="box">{q}<br><strong>答え：{a}</strong><br>{exp}</div><div class="tip">ORIVECTORでは、答えだけでなく「なぜその選択肢になるか」を説明できる状態を目標に復習するのがおすすめです。</div><p><a href="../grammar/">TOEIC文法まとめを見る</a> ／ <a href="../part5/">Part 5対策を見る</a> ／ <a href="../">無料問題を解く</a></p>{author}</main></body></html>'''
+            p.write_text(html,encoding='utf-8')
+          # sitemap: add only if missing
+          sp=Path('sitemap.xml'); s=sp.read_text(encoding='utf-8')
+          insert=''.join(f'<url><loc>https://orivector.jp/toeic-study/{x[0]}/</loc></url>\n' for x in articles if f'/toeic-study/{x[0]}/' not in s)
+          s=s.replace('</urlset>',insert+'</urlset>'); sp.write_text(s,encoding='utf-8')
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git diff --cached --quiet && exit 0
+          git commit -m "Add 15 TOEIC SEO learning articles"
+          git push
