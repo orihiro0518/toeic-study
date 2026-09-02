@@ -29,13 +29,14 @@
 <section id="home" class="hero">
 <span class="badge">ORIVECTOR ORIGINAL</span>
 <h1>TOEICを、<br>問題演習で伸ばす。</h1>
-<p>頻出単語・熟語・文法を4択で反復し、間違えた問題だけ復習できます。文法は「なぜその答えになるか」まで基礎から解説します。</p>
+<p>このページは問題演習専用です。頻出単語・熟語・文法を4択で反復し、間違えた問題だけ復習できます。文法をじっくり学びたい場合は「記事で学ぶ」へ。</p>
 <div class="grid">
 <button class="card" onclick="startQuiz('vocab')"><div class="icon">🔤</div><h3>単語問題</h3><p>TOEICで出やすいビジネス・日常語彙を文脈付きで演習。</p></button>
 <button class="card" onclick="startQuiz('phrase')"><div class="icon">🧩</div><h3>熟語問題</h3><p>Part 5・6で差がつく前置詞句・動詞句・定型表現。</p></button>
 <button class="card" onclick="startQuiz('grammar')"><div class="icon">✏️</div><h3>文法問題</h3><p>品詞、時制、接続詞、関係詞、分詞などを4択で。</p></button>
-<button class="card" onclick="showGrammarGuide()"><div class="icon">📘</div><h3>文法解説</h3><p>TOEIC頻出ルールを例文と見分け方で整理。</p></button>
+
 </div>
+<div id="article-hub-card" class="card" style="margin-top:20px;border-color:#3b82f6"><div class="icon">📚</div><h2 style="margin:7px 0 6px">記事で学ぶ</h2><p>5文型・時制・助動詞・分詞・関係詞など、「なぜそうなる？」から理解する解説記事はこちら。</p><div class="btnrow"><a class="btn" href="articles/" style="text-decoration:none">TOEIC解説記事一覧へ →</a></div></div>
 <div class="stats"><div class="stat"><b id="answeredCount">0</b><span>解答済み</span></div><div class="stat"><b id="correctRate">-</b><span>正答率</span></div><div class="stat"><b id="wrongCount">0</b><span>復習待ち</span></div></div>
 <div class="btnrow"><button class="btn" onclick="showList()">📋 問題一覧</button><button class="btn" onclick="startWrong()">🔁 間違えた問題だけ</button><button class="btn ghost" onclick="resetProgress()">履歴リセット</button></div>
 <div class="card" id="udemy-recommend" style="margin-top:18px;border-color:rgba(168,85,247,.45)">
