@@ -4,7 +4,8 @@
   style.textContent=`
     body.toeic-quiz-focus #article-hub-card,
     body.toeic-quiz-focus #udemy-recommend,
-    body.toeic-quiz-focus #guide {display:none!important}
+    body.toeic-quiz-focus #guide,
+    body.toeic-quiz-focus a[href^="articles/"] {display:none!important}
   `;
   document.head.appendChild(style);
 
