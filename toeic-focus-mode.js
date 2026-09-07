@@ -5,6 +5,7 @@
     body.toeic-quiz-focus #article-hub-card,
     body.toeic-quiz-focus #udemy-recommend,
     body.toeic-quiz-focus #guide,
+    body.toeic-quiz-focus #seo-guides,
     body.toeic-quiz-focus a[href^="articles/"] {display:none!important}
   `;
   document.head.appendChild(style);
@@ -20,5 +21,5 @@
   syncQuizFocus();
 
   const ver=document.querySelector('.ver');
-  if(ver)ver.textContent='ver 1.5.1';
+  if(ver)ver.textContent='ver 1.5.2';
 })();
