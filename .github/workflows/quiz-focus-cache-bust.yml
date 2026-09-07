@@ -1,0 +1,46 @@
+name: Apply TOEIC focused quiz mode
+
+on:
+  push:
+    paths:
+      - '.github/workflows/quiz-focus-cache-bust.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch only quiz focus wiring and cache versions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index = Path('index.html')
+          s = index.read_text(encoding='utf-8')
+          s2 = s.replace('Ver 2.1.1', 'Ver 2.1.2').replace('v=211', 'v=212')
+          if s2 != s:
+              index.write_text(s2, encoding='utf-8')
+
+          legacy = Path('legacy.html')
+          s = legacy.read_text(encoding='utf-8')
+          s2 = re.sub(r'<script src="toeic-v3\.js(?:\?v=\d+)?"></script>', '<script src="toeic-v3.js?v=151"></script>', s, count=1)
+          if s2 == s:
+              raise SystemExit('toeic-v3.js script tag was not found; refusing broad rewrite')
+          legacy.write_text(s2, encoding='utf-8')
+          PY
+      - name: Commit targeted changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html legacy.html
+          if git diff --cached --quiet; then
+            echo 'No changes needed.'
+          else
+            git commit -m 'Hide learning content during TOEIC quiz and refresh cache'
+            git push
+          fi
