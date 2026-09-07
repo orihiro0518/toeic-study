@@ -60,5 +60,5 @@
   syncQuizFocus();
 
   const ver=document.querySelector('.ver');
-  if(ver)ver.textContent='ver 1.5.5';
+  if(ver)ver.textContent='ver 1.5.6';
 })();
